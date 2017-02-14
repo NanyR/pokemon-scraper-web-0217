@@ -1,16 +1,17 @@
 require 'pry'
 class Pokemon
 
-  attr_accessor :id, :name, :type, :db, :hp
+  attr_accessor :id, :name, :type, :hp, :db
 
   @@all=[]
 
-  def initialize(poke_hash)
-    @id=poke_hash[:id]
-    @name=poke_hash[:name]
-    @type= poke_hash[:type]
-    @db=poke_hash[:db]
+  def initialize(id:, name:, type:, hp:nil, db:)
+    @id=id
+    @name=name
+    @type= type
     @hp=hp
+    @db=db
+
   end
 
   def self.save(name, type, db)
@@ -19,19 +20,18 @@ class Pokemon
 
 
   def self.find(id, db)
+
     poke_object=db.execute('SELECT * FROM pokemon WHERE id=(?)', [id])
     poke_object.flatten!
     poke_hash={:id=> poke_object[0], :name=>poke_object[1], :type=>poke_object[2], :hp=>poke_object[3], :db=> db}
-    Pokemon.new(poke_hash)
-    binding.pry
+    new_pokemon=Pokemon.new(poke_hash)
+    # binding.pry
   end
 
-  def alter_hp(new_hp, db)
-    db.execute('UPDATE pokemon SET hp=? WHERE id=?', new_hp, self.id)
-    binding.pry
-    # self.hp=db.execute('SELECT hp FROM pokemon WHERE name=(?)', [self.name])
-
-
+  def alter_hp(hp, db)
+      # binding.pry
+    db.execute('UPDATE pokemon SET hp=? WHERE id=?', hp, self.id)
+    # binding.pry
   end
 
 end
